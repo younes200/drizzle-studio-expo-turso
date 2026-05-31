@@ -1,33 +1,38 @@
 import { useDevToolsPluginClient } from 'expo/devtools';
 import { useEffect } from 'react';
+function bindParams(params) {
+    return params?.length ? [params] : [];
+}
+function formatRows(rows, arrayMode) {
+    return arrayMode ? rows.map((row) => Object.values(row)) : rows;
+}
 export function useDrizzleStudio(db) {
     const client = useDevToolsPluginClient('expo-drizzle-studio-plugin');
     const queryFn = (db, client) => async (e) => {
+        const statement = db.prepare(e.sql);
         try {
-            const statement = await db.prepareAsync(e.sql);
-            let executed;
-            if (e.arrayMode) {
-                executed = await statement.executeForRawResultAsync(e.params || []);
-            }
-            else {
-                executed = await statement.executeAsync(e.params || []);
-            }
-            const data = await executed.getAllAsync();
-            client.sendMessage(`query-${e.id}`, data);
+            const rows = await statement.all(...bindParams(e.params));
+            client.sendMessage(`query-${e.id}`, formatRows(rows, e.arrayMode));
         }
         catch (error) {
             client.sendMessage(`query-${e.id}`, { error: error instanceof Error ? error.message : String(error) });
+        }
+        finally {
+            await statement.finalize();
         }
     };
     const transactionFn = (db, client) => async (e) => {
         const results = [];
         try {
-            await db.withTransactionAsync(async () => {
+            await db.transaction(async () => {
                 for (const query of e.queries) {
-                    const stmt = await db.prepareAsync(query.sql);
-                    const executed = await stmt.executeAsync(query.params || []);
-                    const result = await executed.getAllAsync();
-                    results.push(result);
+                    const statement = db.prepare(query.sql);
+                    try {
+                        results.push(await statement.all(...bindParams(query.params)));
+                    }
+                    finally {
+                        await statement.finalize();
+                    }
                 }
             });
         }

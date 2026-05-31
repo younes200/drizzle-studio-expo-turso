@@ -1,3 +1,3 @@
-import * as SQLite from 'expo-sqlite';
-export declare function useDrizzleStudio(db: SQLite.SQLiteDatabase | null): void;
+import { type Database } from '@tursodatabase/sync-react-native';
+export declare function useDrizzleStudio(db: Database | null): void;
 //# sourceMappingURL=useDrizzleStudio.d.ts.map

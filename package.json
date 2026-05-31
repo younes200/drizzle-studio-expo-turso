@@ -1,7 +1,7 @@
 {
-    "name": "expo-drizzle-studio-plugin",
-    "version": "0.2.1",
-    "description": "Expo DevTools Plugin for Drizzle Studio",
+    "name": "expo-turso-drizzle-studio-plugin",
+    "version": "0.0.1",
+    "description": "Expo DevTools Plugin for Drizzle Studio with Turso",
     "main": "build/index.js",
     "types": "build/index.d.ts",
     "sideEffects": false,
@@ -17,7 +17,8 @@
     },
     "keywords": [
         "expo",
-        "devtools"
+        "devtools",
+        "turso"
     ],
     "files": [
         "build",
@@ -28,13 +29,14 @@
     "license": "MIT",
     "dependencies": {},
     "devDependencies": {
+        "@tursodatabase/sync-react-native": "^0.6.1",
+        "@types/react": "^19.1.0",
         "expo": "~54.0.9",
         "expo-module-scripts": "^5.0.7",
-        "typescript": "^5.9.2",
-        "expo-sqlite": "^16.0.8"
+        "typescript": "^5.9.2"
     },
     "peerDependencies": {
         "expo": ">=53.0.5",
-        "expo-sqlite": ">=15.2.9"
+        "@tursodatabase/sync-react-native": ">=0.6.0"
     }
 }
